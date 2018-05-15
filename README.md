@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/fenghuang-js/fenghuang-core.svg?branch=master)](https://travis-ci.com/fenghuang-js/fenghuang-core)
+[![Coverage Status](https://coveralls.io/repos/github/fenghuang-js/fenghuang-core/badge.svg?branch=master)](https://coveralls.io/github/fenghuang-js/fenghuang-core?branch=master)
 # Fenghuang
 
 **What fenghuang is:**
