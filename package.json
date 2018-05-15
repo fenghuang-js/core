@@ -1,0 +1,39 @@
+{
+  "name": "fenghuang-core",
+  "version": "0.0.1",
+  "description": "Fenghuang Platform Core",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc mocha",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "nyc": {
+    "all": true,
+    "cache": true,
+    "reporter": [
+      "html",
+      "text"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fenghuang-js/fenghuang-core.git"
+  },
+  "keywords": [
+    "fenghuang"
+  ],
+  "author": "Michaël St-Georges <m.stgeorges@gmail.com>",
+  "license": "Beerware",
+  "bugs": {
+    "url": "https://github.com/fenghuang-js/fenghuang-core/issues"
+  },
+  "homepage": "https://github.com/fenghuang-js/fenghuang-core#readme",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "coveralls": "^3.0.1",
+    "mocha": "^5.1.1",
+    "nyc": "^11.7.3",
+    "sinon": "^5.0.7",
+    "sinon-chai": "^3.0.0"
+  }
+}
