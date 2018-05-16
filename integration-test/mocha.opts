@@ -1,0 +1,6 @@
+--recursive
+--full-trace
+--throw-deprecation
+--trace-deprecation
+integration-test/**/*.js
+

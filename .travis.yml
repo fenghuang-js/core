@@ -1,7 +1,19 @@
 language: node_js
 node_js:
   - "node"
-script:
-  - npm test
-after_success: npm run coveralls
 
+install:
+- npm ci
+# keep the npm cache around to speed up installs
+cache:
+  directories:
+    - ~/.npm # cache npm's cache
+    - ~/npm # cache latest npm
+jobs:
+  include:
+    - script: npm test
+      after_success: npm run coveralls
+    - stage: integration-test
+      script: npm run integration-test
+    - stage: lint
+      script: npm run lint

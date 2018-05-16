@@ -1,0 +1,4 @@
+--recursive
+--full-trace
+--check-leaks
+test/**/*.js

@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "integration-test": "mocha --opts integration-test/mocha.opts",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "lint": "eslint",
+    "lint-staged": "lint-staged"
   },
   "nyc": {
     "all": true,
@@ -30,10 +33,31 @@
   "homepage": "https://github.com/fenghuang-js/fenghuang-core#readme",
   "devDependencies": {
     "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
     "coveralls": "^3.0.1",
+    "eslint": "^4.19.1",
+    "lint-staged": "^7.1.0",
     "mocha": "^5.1.1",
     "nyc": "^11.7.3",
+    "pre-commit": "^1.2.2",
     "sinon": "^5.0.7",
     "sinon-chai": "^3.0.0"
-  }
+  },
+  "dependencies": {
+    "bottlejs": "^1.7.1",
+    "eslint-plugin-json": "^1.2.0"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.json": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "pre-commit": [
+    "lint-staged"
+  ]
 }
