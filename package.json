@@ -16,6 +16,10 @@
     "reporter": [
       "html",
       "text"
+    ],
+    "include": [
+      "lib/**/*",
+      "index.js"
     ]
   },
   "repository": {
@@ -36,16 +40,18 @@
     "chai-as-promised": "^7.1.1",
     "coveralls": "^3.0.1",
     "eslint": "^4.19.1",
+    "eslint-plugin-json": "^1.2.0",
     "lint-staged": "^7.1.0",
     "mocha": "^5.1.1",
     "nyc": "^11.7.3",
     "pre-commit": "^1.2.2",
+    "proxyquire": "^2.0.1",
     "sinon": "^5.0.7",
     "sinon-chai": "^3.0.0"
   },
   "dependencies": {
     "bottlejs": "^1.7.1",
-    "eslint-plugin-json": "^1.2.0"
+    "camelcase": "^5.0.0"
   },
   "lint-staged": {
     "*.js": [
