@@ -15,6 +15,10 @@ describe("FenghuangService", function() {
 
     it("Should resolve the dependency tree", function() {
         class Beer extends FenghuangService {
+            static get autoStart() {
+                return false;
+            }
+
             static get dependencies() {
                 return [
                     "Water",
@@ -26,6 +30,10 @@ describe("FenghuangService", function() {
         Beer._register();
 
         class Malt extends FenghuangService {
+            static get autoStart() {
+                return false;
+            }
+
             static get dependencies() {
                 return [
                     "Water",
@@ -37,12 +45,17 @@ describe("FenghuangService", function() {
         Malt._register();
 
         class Water extends FenghuangService {
+            static get autoStart() {
+                return false;
+            }
         }
 
         Water._register();
 
         class Air extends FenghuangService {
-
+            static get autoStart() {
+                return false;
+            }
         }
 
         Air._register();
@@ -52,6 +65,10 @@ describe("FenghuangService", function() {
 
     it("Should inject dependencies as underscored properties", function() {
         class Beer extends FenghuangService {
+            static get autoStart() {
+                return false;
+            }
+
             static get dependencies() {
                 return [
                     "Water",
@@ -63,6 +80,10 @@ describe("FenghuangService", function() {
         Beer._register();
 
         class Malt extends FenghuangService {
+            static get autoStart() {
+                return false;
+            }
+
             static get dependencies() {
                 return [
                     "Water",
@@ -74,12 +95,17 @@ describe("FenghuangService", function() {
         Malt._register();
 
         class Water extends FenghuangService {
+            static get autoStart() {
+                return false;
+            }
         }
 
         Water._register();
 
         class HotAir extends FenghuangService {
-
+            static get autoStart() {
+                return false;
+            }
         }
 
         HotAir._register();

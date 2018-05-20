@@ -20,6 +20,9 @@
     "include": [
       "lib/**/*",
       "index.js"
+    ],
+    "exclude": [
+        "lib/console.js"
     ]
   },
   "repository": {
@@ -50,8 +53,10 @@
     "sinon-chai": "^3.0.0"
   },
   "dependencies": {
+    "bluebird": "^3.5.1",
     "bottlejs": "^1.7.1",
-    "camelcase": "^5.0.0"
+    "camelcase": "^5.0.0",
+    "glob": "^7.1.2"
   },
   "lint-staged": {
     "*.js": [

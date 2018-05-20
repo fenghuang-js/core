@@ -1,0 +1,6 @@
+{
+    "entryPoint": "./index.js",
+    "dependencies": [
+        "../ServiceC"
+    ]
+}

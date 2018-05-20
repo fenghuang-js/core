@@ -17,6 +17,52 @@ describe("FenghuangService", function() {
         });
     });
 
+    describe("autoStart", function() {
+        const FenghuangService = require(FILE_PATH);
+
+        it("Should default to true", function() {
+            expect(FenghuangService.autoStart).to.be.true;
+        });
+    });
+
+    describe("_dependencies", function() {
+        const FenghuangService = require(FILE_PATH);
+
+        it("Should add FenghuangLoader if autoStart is true", function() {
+            class TestWithAutoStart extends FenghuangService {
+                static get dependencies() {
+                    return [
+                        "DependencyA",
+                        "DependencyB"
+                    ];
+                }
+
+                static get autoStart() {
+                    return true;
+                }
+            }
+
+            expect(TestWithAutoStart._dependencies).to.deep.equal(["FenghuangLoader", "DependencyA", "DependencyB"]);
+        });
+
+        it("Shouldn't add FenghuangLoader if autoStart is false", function() {
+            class TestWithAutoStart extends FenghuangService {
+                static get dependencies() {
+                    return [
+                        "DependencyA",
+                        "DependencyB"
+                    ];
+                }
+
+                static get autoStart() {
+                    return false;
+                }
+            }
+
+            expect(TestWithAutoStart._dependencies).to.deep.equal(["DependencyA", "DependencyB"]);
+        });
+    });
+
     describe("register", function() {
         const sandbox = sinon.sandbox.create();
 
@@ -29,7 +75,7 @@ describe("FenghuangService", function() {
         });
 
         class TestService extends FenghuangService {
-            static get dependencies() {
+            static get _dependencies() {
                 return [
                     "a",
                     "b",
@@ -85,6 +131,8 @@ describe("FenghuangService", function() {
 
         const logging = require("../lib/console");
 
+        const EventEmitter = require("events");
+
         const FenghuangService = proxyquire(FILE_PATH, {
             "./console": logging
         });
@@ -92,9 +140,15 @@ describe("FenghuangService", function() {
         class TestService extends FenghuangService {
         }
 
+        const fenghuangLoader = new EventEmitter(); //Fake FenghuangLoader
+
         beforeEach(function() {
             sandbox.stub(logging, "log");
-            sandbox.stub(FenghuangService.prototype, "__injectDependencies");
+            sandbox.stub(TestService.prototype, "__injectDependencies").callsFake(function() {
+                this._fenghuangLoader = fenghuangLoader;
+            });
+            sandbox.stub(TestService.prototype, "_start");
+            sandbox.stub(fenghuangLoader, "on");
         });
 
         afterEach(function() {
@@ -111,9 +165,37 @@ describe("FenghuangService", function() {
             const testService = new TestService("a", "b", "c");
             expect(testService.__injectDependencies).to.have.been.calledWith(["a", "b", "c"]);
         });
+
+        it("Should bind _start to fenghuangLoader loadFinished if autoStart is true", function() {
+            class TestServiceWithAutoStart extends TestService {
+                static get autoStart() {
+                    return true;
+                }
+            }
+
+            fenghuangLoader.on.withArgs("loadFinished").yields();
+
+            const testService = new TestServiceWithAutoStart();
+
+            expect(testService._start).to.have.been.calledOn(testService);
+        });
+
+        it("Should not _start to fenghuangLoader loadFinished if autoStart is false", function() {
+            class TestServiceWithoutAutoStart extends TestService {
+                static get autoStart() {
+                    return false;
+                }
+            }
+
+            fenghuangLoader.on.withArgs("loadFinished").yields();
+
+            const testService = new TestServiceWithoutAutoStart();
+
+            expect(testService._start).to.not.have.been.called;
+        });
     });
 
-    describe("start", function() {
+    describe("_start", function() {
         const sandbox = sinon.sandbox.create();
 
         const logging = require("../lib/console");
@@ -122,8 +204,14 @@ describe("FenghuangService", function() {
             "./console": logging
         });
 
+        class TestService extends FenghuangService {
+        }
+
+        const testService = Object.create(TestService.prototype);
+
         beforeEach(function() {
             sandbox.stub(logging, "log");
+            sandbox.stub(testService, "emit");
         });
 
         afterEach(function() {
@@ -131,15 +219,47 @@ describe("FenghuangService", function() {
             sandbox.restore();
         });
 
-        class TestService extends FenghuangService {
-        }
-
-        const testService = Object.create(TestService.prototype);
-
         it("Should log initializing message", function() {
-            testService.start();
+            testService._start();
             expect(logging.log).to.have.been.calledWith("Starting {yellow TestService}");
         });
+
+        it("Should emit started", function() {
+            return testService._start()
+                .then(() => {
+                    expect(testService.emit).to.have.been.calledWith("started");
+                });
+        });
+
+        describe("start present", function() {
+            class TestServiceWithStart extends TestService {
+                start() {
+
+                }
+            }
+
+            const testServiceWithStart = Object.create(TestServiceWithStart.prototype);
+
+            beforeEach(function() {
+                sandbox.stub(testServiceWithStart, "start");
+            });
+
+            it("Should call start", function() {
+                return testServiceWithStart._start()
+                    .then(() => {
+                        expect(testServiceWithStart.start).to.have.been.called;
+                    });
+            });
+
+            it("Should return start result", function() {
+                const startResult = {};
+                testServiceWithStart.start.resolves(startResult);
+
+                return expect(testServiceWithStart._start()).to.eventually.equal(startResult);
+            });
+        });
+
+
     });
 
     describe("__injectDependencies", function() {
@@ -152,7 +272,7 @@ describe("FenghuangService", function() {
         });
 
         class TestService extends FenghuangService {
-            static get dependencies() {
+            static get _dependencies() {
                 return [
                     "a",
                     "b",
