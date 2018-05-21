@@ -1,6 +1,6 @@
 {
   "name": "fenghuang-core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Fenghuang Platform Core",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
       "index.js"
     ],
     "exclude": [
-        "lib/console.js"
+      "lib/console.js"
     ]
   },
   "repository": {
@@ -56,6 +56,8 @@
     "bluebird": "^3.5.1",
     "bottlejs": "^1.7.1",
     "camelcase": "^5.0.0",
+    "deepmerge": "^2.1.0",
+    "dot-object": "^1.7.0",
     "glob": "^7.1.2"
   },
   "lint-staged": {

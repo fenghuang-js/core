@@ -211,6 +211,7 @@ describe("FenghuangService", function() {
 
         beforeEach(function() {
             sandbox.stub(logging, "log");
+            sandbox.stub(logging, "debug");
             sandbox.stub(testService, "emit");
         });
 
@@ -221,6 +222,7 @@ describe("FenghuangService", function() {
 
         it("Should log initializing message", function() {
             testService._start();
+
             expect(logging.log).to.have.been.calledWith("Starting {yellow TestService}");
         });
 
@@ -242,12 +244,19 @@ describe("FenghuangService", function() {
 
             beforeEach(function() {
                 sandbox.stub(testServiceWithStart, "start");
+                sandbox.stub(testServiceWithStart, "_getConfig").returns("FakedConfig");
             });
 
-            it("Should call start", function() {
+            it("Should debug log config", function() {
+                testServiceWithStart._start();
+
+                expect(logging.debug).to.have.been.calledWith("Config for TestServiceWithStart:\nFakedConfig");
+            });
+
+            it("Should call start with the config", function() {
                 return testServiceWithStart._start()
                     .then(() => {
-                        expect(testServiceWithStart.start).to.have.been.called;
+                        expect(testServiceWithStart.start).to.have.been.calledWith("FakedConfig");
                     });
             });
 
@@ -258,8 +267,164 @@ describe("FenghuangService", function() {
                 return expect(testServiceWithStart._start()).to.eventually.equal(startResult);
             });
         });
+    });
 
+    describe("_getGlobalConfig", function() {
+        const sandbox = sinon.sandbox.create();
 
+        const logging = require("../lib/console");
+
+        const FenghuangService = proxyquire(FILE_PATH, {
+            "./console": logging
+        });
+
+        class TestService extends FenghuangService {
+        }
+
+        const testService = Object.create(TestService.prototype);
+
+        beforeEach(function() {
+            testService._fenghuangLoader = {
+                globalConfig: {
+                    TestService: {}
+                }
+            };
+
+            sandbox.stub(logging, "log");
+        });
+
+        afterEach(function() {
+            sandbox.reset();
+            sandbox.restore();
+        });
+
+        it("Should log if FenghuangLoader is not present", function() {
+            delete testService._fenghuangLoader;
+
+            testService._getGlobalConfig();
+
+            expect(logging.log).to.have.been.calledWith("{yellow WARNING:} FenghuangLoader not present. Will not be able to get global config.");
+        });
+
+        it("Should return global config if FenghuangLoader is present", function() {
+            expect(testService._getGlobalConfig()).to.equal(testService._fenghuangLoader.globalConfig.TestService);
+        });
+    });
+
+    describe("_getConfigFromFile", function() {
+        const sandbox = sinon.sandbox.create();
+
+        const fs = require("fs");
+
+        const path = require("path");
+
+        const logging = require("../lib/console");
+
+        const fakedConfig = {
+            "@noCallThru": true
+        };
+
+        const FenghuangService = proxyquire(FILE_PATH, {
+            "logging": logging,
+            "fs": fs,
+            "path": path,
+            "join(cwd,GoodFile.json)": fakedConfig
+        });
+
+        class GoodFile extends FenghuangService {
+        }
+
+        class BadFile extends FenghuangService {
+        }
+
+        const goodFileService = Object.create(GoodFile.prototype);
+        const badFileService = Object.create(BadFile.prototype);
+
+        beforeEach(function() {
+            sandbox.stub(path, "join").callsFake(function(...args) {
+                return `join(${args.join(",")})`;
+            });
+            sandbox.stub(fs, "existsSync").callsFake(function(fileName) {
+                return !(fileName === "join(cwd,BadFile.json)");
+            });
+            sandbox.stub(process, "cwd").returns("cwd");
+            sandbox.stub(logging, "debug");
+        });
+
+        afterEach(function() {
+            sandbox.reset();
+            sandbox.restore();
+        });
+
+        it("Shouldn't continue if the file doesn't exist", function() {
+            badFileService._getConfigFromFile();
+
+            expect(logging.debug).to.not.have.been.called;
+        });
+
+        it("Should debug log if the file exists", function() {
+            goodFileService._getConfigFromFile();
+
+            expect(logging.debug).to.have.been.calledWith("Loading config from file: join(cwd,GoodFile.json)");
+        });
+
+        it("Should return config if the file exists", function() {
+            expect(goodFileService._getConfigFromFile()).to.equal(fakedConfig);
+        });
+    });
+
+    describe("_getEnvConfig", function() {
+        const envConfig = {
+            envConfig: {
+                TestService: {}
+            }
+        };
+
+        const FenghuangService = proxyquire(FILE_PATH, {
+            "./envConfig": envConfig
+        });
+
+        class TestService extends FenghuangService {
+        }
+
+        const testService = Object.create(TestService.prototype);
+
+        it("Should return config from envConfig", function() {
+            expect(testService._getEnvConfig()).to.equal(envConfig.envConfig.TestService);
+        });
+    });
+
+    describe("_getConfig", function() {
+        const sandbox = sinon.sandbox.create();
+
+        const deepmerge = require("deepmerge");
+
+        const FenghuangService = proxyquire(FILE_PATH, {
+            "deepmerge": deepmerge
+        });
+
+        class TestService extends FenghuangService {
+        }
+
+        const testService = Object.create(TestService.prototype);
+
+        beforeEach(function() {
+            sandbox.stub(testService, "_getGlobalConfig").returns("globalConfig");
+            sandbox.stub(testService, "_getConfigFromFile").returns("configFromFile");
+            sandbox.stub(testService, "_getEnvConfig").returns("envConfig");
+            sandbox.stub(deepmerge, "all").callsFake(function(toMerge) {
+                return `deepmerge(${toMerge.join(",")})`;
+            });
+        });
+
+        afterEach(function() {
+            sandbox.reset();
+            sandbox.restore();
+        });
+
+        it("Should return merged config", function() {
+            expect(testService._getConfig()).to.equal("deepmerge(globalConfig,configFromFile,envConfig)");
+        });
     });
 
     describe("__injectDependencies", function() {
