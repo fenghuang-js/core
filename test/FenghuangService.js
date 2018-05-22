@@ -328,7 +328,7 @@ describe("FenghuangService", function() {
             "logging": logging,
             "fs": fs,
             "path": path,
-            "join(cwd,GoodFile.json)": fakedConfig
+            "resolve(GoodFile.json)": fakedConfig
         });
 
         class GoodFile extends FenghuangService {
@@ -341,13 +341,12 @@ describe("FenghuangService", function() {
         const badFileService = Object.create(BadFile.prototype);
 
         beforeEach(function() {
-            sandbox.stub(path, "join").callsFake(function(...args) {
-                return `join(${args.join(",")})`;
+            sandbox.stub(path, "resolve").callsFake(function(...args) {
+                return `resolve(${args.join(",")})`;
             });
             sandbox.stub(fs, "existsSync").callsFake(function(fileName) {
-                return !(fileName === "join(cwd,BadFile.json)");
+                return !(fileName === "resolve(BadFile.json)");
             });
-            sandbox.stub(process, "cwd").returns("cwd");
             sandbox.stub(logging, "debug");
         });
 
@@ -365,7 +364,7 @@ describe("FenghuangService", function() {
         it("Should debug log if the file exists", function() {
             goodFileService._getConfigFromFile();
 
-            expect(logging.debug).to.have.been.calledWith("Loading config from file: join(cwd,GoodFile.json)");
+            expect(logging.debug).to.have.been.calledWith("Loading config from file: resolve(GoodFile.json)");
         });
 
         it("Should return config if the file exists", function() {
