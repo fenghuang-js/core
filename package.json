@@ -1,6 +1,6 @@
 {
   "name": "fenghuang-core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Fenghuang Platform Core",
   "main": "index.js",
   "scripts": {

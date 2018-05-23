@@ -25,6 +25,14 @@ describe("FenghuangService", function() {
         });
     });
 
+    describe("_defaultConfig", function() {
+        const FenghuangService = require(FILE_PATH);
+
+        it("Should default to an empty object", function() {
+            expect(FenghuangService._defaultConfig).to.deep.equal({});
+        });
+    });
+
     describe("_dependencies", function() {
         const FenghuangService = require(FILE_PATH);
 
@@ -411,6 +419,9 @@ describe("FenghuangService", function() {
             sandbox.stub(testService, "_getGlobalConfig").returns("globalConfig");
             sandbox.stub(testService, "_getConfigFromFile").returns("configFromFile");
             sandbox.stub(testService, "_getEnvConfig").returns("envConfig");
+            sandbox.stub(TestService, "_defaultConfig").get(function() {
+                return "_defaultConfig";
+            });
             sandbox.stub(deepmerge, "all").callsFake(function(toMerge) {
                 return `deepmerge(${toMerge.join(",")})`;
             });
@@ -422,7 +433,7 @@ describe("FenghuangService", function() {
         });
 
         it("Should return merged config", function() {
-            expect(testService._getConfig()).to.equal("deepmerge(globalConfig,configFromFile,envConfig)");
+            expect(testService._getConfig()).to.equal("deepmerge(_defaultConfig,globalConfig,configFromFile,envConfig)");
         });
     });
 
