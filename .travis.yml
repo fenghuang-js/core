@@ -1,25 +1,13 @@
 # defaults
 language: node_js
-node_js: '10'
+node_js: '12'
 
-# The following block was taken verbatim from mocha's .travis.yml
-# `nvm install` happens before the cache is restored, which means
-# we must install our own npm elsewhere (`~/npm`)
-before_install: |
-  [[ ! -x ~/npm/node_modules/.bin/npm ]] && {
-    # caching feature creates `~/npm` for us
-    cd ~/npm && npm install npm@^5
-    cd -
-  } || true
-  # avoids bugs around https://github.com/travis-ci/travis-ci/issues/5092
-  export PATH=~/npm/node_modules/.bin:$PATH
 # this avoids compilation in most cases (where we don't need it)
 install: npm ci --ignore-scripts
 
 # keep the npm cache around to speed up installs
 cache:
   directories:
-    - ~/.npm # cache npm's cache
     - ~/npm # cache latest npm
 jobs:
   include:

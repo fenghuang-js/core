@@ -33,7 +33,7 @@
     "fenghuang"
   ],
   "author": "Michaël St-Georges <m.stgeorges@gmail.com>",
-  "license": "Beerware",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/fenghuang-js/fenghuang-core/issues"
   },
@@ -45,8 +45,8 @@
     "eslint": "^4.19.1",
     "eslint-plugin-json": "^1.2.0",
     "lint-staged": "^7.1.0",
-    "mocha": "^5.1.1",
-    "nyc": "^11.7.3",
+    "mocha": "^8.3.1",
+    "nyc": "^15.1.0",
     "pre-commit": "^1.2.2",
     "proxyquire": "^2.0.1",
     "sinon": "^5.0.7",
