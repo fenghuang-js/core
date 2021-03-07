@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha",
-    "integration-test": "mocha --opts integration-test/mocha.opts",
+    "integration-test": "mocha integration-test",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint",
     "lint-staged": "lint-staged"

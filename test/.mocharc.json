@@ -1,0 +1,5 @@
+{
+    "recursive": true,
+    "full-trace": true,
+    "check-leaks": true
+}

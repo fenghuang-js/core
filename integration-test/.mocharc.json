@@ -1,0 +1,7 @@
+{
+    "recursive": true,
+    "full-trace": true,
+    "check-leaks": true,
+    "throw-deprecation": true,
+    "trace-deprecation": true
+}
