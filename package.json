@@ -42,10 +42,10 @@
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "coveralls": "^3.0.1",
-    "eslint": "^4.19.1",
+    "eslint": "^8.31.0",
     "eslint-plugin-json": "^1.2.0",
     "lint-staged": "^7.1.0",
-    "mocha": "^8.3.1",
+    "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "pre-commit": "^1.2.2",
     "proxyquire": "^2.0.1",
@@ -57,7 +57,7 @@
     "bottlejs": "^1.7.1",
     "camelcase": "^5.0.0",
     "deepmerge": "^2.1.0",
-    "dot-object": "^1.7.0",
+    "dot-object": "^2.1.4",
     "glob": "^7.1.2"
   },
   "lint-staged": {
